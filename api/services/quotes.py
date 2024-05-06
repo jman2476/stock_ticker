@@ -1,4 +1,5 @@
 import finnhub
+import yfinance as yf
 from polygon import RESTClient
 from twelvedata import TDClient
 
@@ -23,15 +24,21 @@ twelveData_client = TDClient(apikey=twelveData_key)
 
 ticker_symbol = 'AAPL'
 
+# Set up yfinance stock ticker
+yf_ticker = yf.Ticker(ticker_symbol)
+
 # Get quote from finnhub
 quote_finnhub = finnhub_client.quote(ticker_symbol)
 # Get quote from polygon
 quotes_polygon = polygon_client.list_quotes(ticker=ticker_symbol, timestamp='2024-03-24')
 # Get Quote from twelve data
 quote_twelveData = twelveData_client.quote(symbol=ticker_symbol)
+# Get quote from yfinance
+quote_yfinance = yf_ticker.history(period="1d")
 
 print("Finnhub: ", quote_finnhub)
 print("Twelve Data: ", quote_twelveData.as_json())
+print("yFinance: ", quote_yfinance)
 
 # for quote in quotes_polygon:
 #     print("Polygon: ", quote)

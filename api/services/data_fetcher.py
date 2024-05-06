@@ -1,0 +1,1 @@
+# Fetches data from Finnhub, TwelveData, and yFinance

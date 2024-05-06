@@ -1,5 +1,6 @@
 from flask import Flask
 from flasgger import Swagger
+from api.route.quote import stock_quote_api
 
 def create_app():
     app = Flask(__name__)
@@ -9,8 +10,8 @@ def create_app():
     }
     swagger = Swagger(app)
      ## Initialize Config
-    # app.config.from_pyfile('config.py')
-    # app.register_blueprint(home_api, url_prefix='/api')
+    app.config.from_pyfile('config.py')
+    app.register_blueprint(stock_quote_api, url_prefix='/api')
 
     return app
 
