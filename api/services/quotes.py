@@ -36,9 +36,38 @@ quote_twelveData = twelveData_client.quote(symbol=ticker_symbol)
 # Get quote from yfinance
 quote_yfinance = yf_ticker.history(period="1d")
 
-print("Finnhub: ", quote_finnhub)
-print("Twelve Data: ", quote_twelveData.as_json())
-print("yFinance: ", quote_yfinance)
+# print("Finnhub: ", quote_finnhub["c"], quote_finnhub)
+# print("Twelve Data: ", quote_twelveData.as_json()['close'], quote_twelveData.as_json())
+# print("yFinance: ", quote_yfinance.iloc[0]['Close'], quote_yfinance)
 
-# for quote in quotes_polygon:
-#     print("Polygon: ", quote)
+# function to return an list of quotes for a given stock
+def quotes(ticker_symbol):
+
+    return {
+        "finnhub" : quote_finnhub["c"],
+        "twelve_data" : float(quote_twelveData.as_json()['close']),
+        "yfinance" : quote_yfinance.iloc[0]['Close']
+    }
+
+# function to find the average of all stock quotes
+def average():
+    prices = quotes('AAPL')
+    mean = sum(prices.values()) / 3
+
+    return round(mean, 2)
+
+# function to find the difference between each quote and the average price
+def slippage():
+    mean = average()
+    prices = quotes('AAPL')
+    slippage = {}
+
+    for key in prices.keys():
+        prices[key] = abs(prices[key] - mean)
+        slippage[key] = round(prices[key], 4)
+
+    return slippage
+
+print(quotes('AAPL'))
+print(average())
+print(slippage())
