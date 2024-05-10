@@ -1,6 +1,6 @@
 from flask import Flask
 from flasgger import Swagger
-from api.route.quote import stock_quote_api
+from route.quote import stock_quote_api
 
 def create_app():
     app = Flask(__name__)

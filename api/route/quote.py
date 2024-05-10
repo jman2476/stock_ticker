@@ -1,8 +1,8 @@
 from http import HTTPStatus
 from flask import Blueprint
 from flasgger import swag_from
-from api.model.quotes import QuoteModel
-from api.schema.quotes import QuotesSchema
+from model.quotes import QuoteModel
+from schema.quotes import QuotesSchema
 
 stock_quote_api = Blueprint('api', __name__)
 
@@ -10,7 +10,7 @@ stock_quote_api = Blueprint('api', __name__)
 @stock_quote_api.route('/quotes')
 @swag_from({
     'responses': {
-        HTTPStatus.OK.values: {
+        HTTPStatus.OK.value: {
             'description': 'Get multiple quotes of a stock',
             'schema': QuotesSchema
         }
@@ -30,7 +30,7 @@ def get_quotes():
 @stock_quote_api.route('/average')
 @swag_from({
     'responses': {
-        HTTPStatus.OK.values: {
+        HTTPStatus.OK.value: {
             'description': 'Get average of 3 stock quotes',
             # 'schema': AverageSchema
         }
@@ -44,7 +44,7 @@ def get_average():
 @stock_quote_api.route('/slippage')
 @swag_from({
     'responses': {
-        HTTPStatus.OK.values: {
+        HTTPStatus.OK.value: {
             'description': 'Get the differenect between the average and the quote price for each source',
             # 'schema': SlippageSchema
         }
