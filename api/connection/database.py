@@ -11,7 +11,7 @@ cur = con.cursor()
 cur.execute('''
     CREATE TABLE IF NOT EXISTS stock_quotes (
             time TEXT NOT NULL,
-            symbol VARCHAR NOT NULL,
+            symbol TEXT NOT NULL,
             finnhub FLOAT,
             twelve_data FLOAT,
             yfinance FLOAT,
@@ -21,6 +21,7 @@ cur.execute('''
             yfin_spread FLOAT
     )
     ''')
+cur.execute('CREATE TABLE IF NOT EXISTS tests (name TEXT, numb INT, frac FLOAT)')
 con.commit()
 
 # Close the connection
