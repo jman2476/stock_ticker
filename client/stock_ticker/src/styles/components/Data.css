@@ -1,0 +1,9 @@
+.row {
+    display: flex;
+    
+}
+
+.row > div {
+    margin: 10px 30px;
+
+}
