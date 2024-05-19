@@ -21,7 +21,6 @@ stock_quote_api = Blueprint('api', __name__)
     }
 })
 def get_quotes():
-    #TODO: write the function to handle this route
     """
     returns Twelve Data, Finnhub and yFinance quotes
 
@@ -40,8 +39,12 @@ def get_quotes():
         }
     }
 })
-def get_average():
-    #TODO: write function to handle averages route
+def get_average(): 
+    """
+    returns averages
+
+    ---
+    """
 
     result = AverageModel()
     return AverageSchema().dump(result), 200
@@ -57,7 +60,11 @@ def get_average():
     }
 })
 def get_spread():
-    #TODO: write function to handle the spread route
+    """
+    returns Twelve Data, Finnhub and yFinance spreads
+
+    ---
+    """
 
     result = SpreadModel()
     return SpreadSchema().dump(result), 200
