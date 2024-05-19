@@ -19,7 +19,7 @@ stock_quote_api = Blueprint('api', __name__)
 def get_quotes():
     #TODO: write the function to handle this route
     """
-    returns Twelve Data and Finnhub quotes
+    returns Twelve Data, Finnhub and yFinance quotes
 
     ---
     """
