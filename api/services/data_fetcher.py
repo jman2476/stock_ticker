@@ -73,7 +73,7 @@ def slippage(quotes, mean):
     dummy_quotes = quotes.copy()
     for key in quotes.keys():
         dummy_quotes[key] = abs(quotes[key] - mean)
-        slip[key] = round(quotes[key], 4)
+        slip[key] = round(dummy_quotes[key], 4)
 
     return slip
 
@@ -173,7 +173,7 @@ async def up_data_base(ticker_symbol, counter = 0):
         # Lets get recursive and call ourselves every 15 seconds
         counter += 1
         if (counter < 4):
-            await asyncio.sleep(15)
+            await asyncio.wait(15)
             await up_data_base(ticker_symbol, counter)
                         
 asyncio.run(up_data_base('AAPL'))

@@ -3,6 +3,10 @@ from flask import Blueprint
 from flasgger import swag_from
 from model.quotes import QuoteModel
 from schema.quotes import QuotesSchema
+from model.average import AverageModel
+from schema.average import AverageSchema
+from model.spread import SpreadModel
+from schema.spread import SpreadSchema
 
 stock_quote_api = Blueprint('api', __name__)
 
@@ -17,9 +21,8 @@ stock_quote_api = Blueprint('api', __name__)
     }
 })
 def get_quotes():
-    #TODO: write the function to handle this route
     """
-    returns Twelve Data and Finnhub quotes
+    returns Twelve Data, Finnhub and yFinance quotes
 
     ---
     """
@@ -32,24 +35,36 @@ def get_quotes():
     'responses': {
         HTTPStatus.OK.value: {
             'description': 'Get average of 3 stock quotes',
-            # 'schema': AverageSchema
+            'schema': AverageSchema
         }
     }
 })
-def get_average():
-    #TODO: write function to handle averages route
-    return "Work in progress"
+def get_average(): 
+    """
+    returns averages
+
+    ---
+    """
+
+    result = AverageModel()
+    return AverageSchema().dump(result), 200
 
 
-@stock_quote_api.route('/slippage')
+@stock_quote_api.route('/spread')
 @swag_from({
     'responses': {
         HTTPStatus.OK.value: {
             'description': 'Get the differenect between the average and the quote price for each source',
-            # 'schema': SlippageSchema
+            # 'schema': SpreadSchema
         }
     }
 })
-def get_slippage():
-    #TODO: write function to handle the slippage route
-    return "Work in progress"
+def get_spread():
+    """
+    returns Twelve Data, Finnhub and yFinance spreads
+
+    ---
+    """
+
+    result = SpreadModel()
+    return SpreadSchema().dump(result), 200
