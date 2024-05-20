@@ -1,6 +1,8 @@
 from flask import Flask
 from flasgger import Swagger
 from route.quote import stock_quote_api
+#from services.data_fetcher import up_data_base
+import asyncio
 
 def create_app():
     app = Flask(__name__)
@@ -27,3 +29,4 @@ if __name__ == '__main__':
     app = create_app()
 
     app.run(port=port)
+

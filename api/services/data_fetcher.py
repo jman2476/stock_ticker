@@ -176,24 +176,5 @@ async def up_data_base(ticker_symbol, counter = 0):
             await asyncio.wait(15)
             await up_data_base(ticker_symbol, counter)
                         
+
 asyncio.run(up_data_base('AAPL'))
-
-#x = get_finnhub('AAPL')
-#y = get_twelve_data('AAPL')
-#z = get_yfinance('AAPL')
-
-#print(x,y,z)
-
-#print(analyzer(x,y,z))
-#up_data_base('AAPL')
-
-def insert_test():
-    conn = connect_to_db()
-    cur = conn.cursor()
-    cur.execute('INSERT INTO tests (name, numb, frac) VALUES (?,?,?)', ('Button', '75', '.75'))
-    conn.commit()
-    cur.close()
-    conn.close()
-    return print('farts')
-
-#def get_test():
