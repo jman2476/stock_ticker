@@ -23,52 +23,52 @@ def connect_to_db():
     con = sqlite3.connect('stock.db')
     return con
 
-# counters to track how many times each has been used
-finn_counter = 0
-twelve_counter = 0
-yfin_counter = 0
+
 
 # Functions to fetch data from the APIs
 # Finnhub fetch
 def get_finnhub(ticker_symbol):
+    print('finn')
     try: 
-        global finn_counter
         data = finnhub_client.quote(ticker_symbol)
-        finn_counter = finn_counter + 1
         close_price = data['c']
         return close_price
     except:
-        raise Exception('No data returned from finnhub')
+        return Exception('No data returned from finnhub')
     
 # Twelve Data fetch
 def get_twelve_data(ticker_symbol):
+    print('twelve')
     try:
-        global twelve_counter
         data = twelveData_client.quote(symbol=ticker_symbol)
-        twelve_counter = twelve_counter + 1
+        print('Data: ' + data)
         close_price = float(data.as_json()['close'])
         return close_price
     except:
-        raise Exception('No data returned from finnhub')
+        return Exception('No data returned from twelve data')
 
 # yFinance fetch
 def get_yfinance(ticker_symbol):
+    print('yfi')
     try:
-        global yf_ticker
         yf_ticker = yf.Ticker(ticker_symbol)
         data = yf_ticker.history('1d')
         close_price = data.iloc[0]['Close']
         return close_price
-    except:
-        raise Exception('Unable to get data from yfinance')
+    except :
+        return Exception('Unable to get data from yfinance')
 
 # Averaging function, takes a dictionary as parameter
 def average(quotes):
+    print(quotes)
     mean = sum(quotes.values()) / len(quotes)
+    print('average2')
+
     return round(mean, 2)
 
 # Slippage function
 def slippage(quotes, mean):
+    print('slip')
     slip = {}
     dummy_quotes = quotes.copy()
     for key in quotes.keys():
@@ -113,8 +113,8 @@ def insert_entry(timestamp, ticker_symbol, quotes, mean, slippage):
 
 
 def get_latest_entry():
-        last_entry = {}
-    #try:
+    last_entry = {}
+    try:
         conn = connect_to_db()
         cur = conn.cursor()
         cur.execute(''' SELECT time, symbol, finnhub, twelve_data, yfinance, average, finn_spread, twelve_spread, yfin_spread FROM stock_quotes ORDER BY time DESC LIMIT 1''')
@@ -122,6 +122,7 @@ def get_latest_entry():
 
         row = cur.fetchone()
         print(row)
+        print('did this run?')
 
         # Convert row into last_entry dict
         last_entry['time'] = row[0]
@@ -134,10 +135,11 @@ def get_latest_entry():
         last_entry['twelve_spread'] = row[7]
         last_entry['yfin_spread'] = row[8]
 
-    #except Exception as err:
-    #    last_entry = {}
-    #    print(err)
-    #finally:
+
+    except Exception as err:
+       last_entry = {}
+       print(err)
+    finally:
         conn.close()
 
         return last_entry
@@ -156,8 +158,7 @@ def trading_hours_check(time_object):
 # Verify the time is during trading hours;
 #       9a-5p EST Mon-Fri
 # Important!!!!! This function cannot be directly reading the desired ticker symbol! You must pass in the value from the user
-async def up_data_base(ticker_symbol, counter = 0):
-
+def up_data_base(ticker_symbol, counter = 0):
     timestamp = datetime.today()
     print(timestamp, isinstance(timestamp, datetime))
     if (not trading_hours_check(timestamp)):
@@ -172,28 +173,9 @@ async def up_data_base(ticker_symbol, counter = 0):
         print(get_latest_entry())
         # Lets get recursive and call ourselves every 15 seconds
         counter += 1
-        if (counter < 4):
-            await asyncio.wait(15)
-            await up_data_base(ticker_symbol, counter)
+        # if (counter < 4):
+        #     await asyncio.wait(15)
+        #     await up_data_base(ticker_symbol, counter)
                         
-asyncio.run(up_data_base('AAPL'))
 
-#x = get_finnhub('AAPL')
-#y = get_twelve_data('AAPL')
-#z = get_yfinance('AAPL')
-
-#print(x,y,z)
-
-#print(analyzer(x,y,z))
-#up_data_base('AAPL')
-
-def insert_test():
-    conn = connect_to_db()
-    cur = conn.cursor()
-    cur.execute('INSERT INTO tests (name, numb, frac) VALUES (?,?,?)', ('Button', '75', '.75'))
-    conn.commit()
-    cur.close()
-    conn.close()
-    return print('farts')
-
-#def get_test():
+# asyncio.run(up_data_base('AAPL'))

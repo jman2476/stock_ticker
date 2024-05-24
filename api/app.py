@@ -1,9 +1,13 @@
 from flask import Flask
 from flasgger import Swagger
+from flask_cors import CORS
 from route.quote import stock_quote_api
+#from services.data_fetcher import up_data_base
+import asyncio
 
 def create_app():
     app = Flask(__name__)
+    CORS(app)
     
     app.config['SWAGGER'] = {
         'title': 'Stock Statistics API',
@@ -27,3 +31,4 @@ if __name__ == '__main__':
     app = create_app()
 
     app.run(port=port)
+
