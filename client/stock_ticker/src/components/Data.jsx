@@ -1,8 +1,14 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import '../App.css'
 import '../styles/components/Data.css'
+import axios from 'axios'
 
-function Data({className}) {
+async function getQuotes(){
+    const quotes = fetch()
+
+}
+
+function Data() {
     const [finnQuote, setFinnQuote] = useState('$0')
     const [twelveQuote, setTwelveQuote] = useState('$0')
     const [yFinQuote, setyFinQuote] = useState('$0')
@@ -10,6 +16,43 @@ function Data({className}) {
     const [finnSpread, setFinnSpread] = useState('$0')
     const [twelveSpread, setTwelveSpread] = useState('$0')
     const [yFinSpread, setyFinSpread] = useState('$0')
+
+    useEffect(() => {
+        axios.get('http://localhost:5000/api/quotes')
+                .then((res) => {
+                    setFinnQuote(res.data.finnhub)
+                    setTwelveQuote(res.data.twelve_data)
+                    setyFinQuote(res.data.yfinance)
+                })
+        
+        const refreshInterval = setInterval(() => {
+            axios.get('http://localhost:5000/api/quotes')
+                .then((res) => {
+                    setFinnQuote(res.data.finnhub)
+                    setTwelveQuote(res.data.twelve_data)
+                    setyFinQuote(res.data.yfinance)
+                })
+        }, 15000)
+
+        return () => clearInterval(refreshInterval)
+    }, [])
+
+    useEffect(() => {
+        axios.get('http://localhost:5000/api/average')
+            .then((res) => {
+                setMeanQuote(res.data.average)
+            })
+    }, [])
+
+    useEffect(() => {
+        axios.get('http://localhost:5000/api/spread')
+            .then((res) => {
+                setFinnSpread(res.data.finnhub)
+                setTwelveSpread(res.data.twelve_data)
+                setyFinSpread(res.data.yfinance)
+            })
+    }, [])
+
 
     return (
         <div className='row'>

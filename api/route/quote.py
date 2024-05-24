@@ -1,5 +1,5 @@
 from http import HTTPStatus
-from flask import Blueprint
+from flask import Blueprint, request
 from flasgger import swag_from
 from model.quotes import QuoteModel
 from schema.quotes import QuotesSchema
@@ -7,11 +7,54 @@ from model.average import AverageModel
 from schema.average import AverageSchema
 from model.spread import SpreadModel
 from schema.spread import SpreadSchema
+from model.symbol import SymbolModel
+from schema.symbol import SymbolSchema
+
+from services.data_fetcher import up_data_base, get_yfinance
 
 stock_quote_api = Blueprint('api', __name__)
 
+# TODO: write the post route for the ticker symbol
+@stock_quote_api.post('/symbol')
+@swag_from({
+    'responses': {
+        HTTPStatus.OK.value: {
+            'description': 'Set the new ticker symbol',
+            'schema': SymbolSchema
+        },
+        HTTPStatus.BAD_REQUEST.value: {
+            'description': 'Please provide a valid stock ticker symbol',
+            'schema': SymbolSchema
+        }
+    }
+})
+def post_ticker():
+    """
+    Posts the new ticker symbol 
+    ---
+    """
+    result = SymbolModel()
+    try:
+    # Check that the ticker symbol provided actually exists 
+        print(request.json['symbol'])
+        ticker_symbol = request.json['symbol']
+        quote = get_yfinance(ticker_symbol)
+        print(quote)
+        if (quote.__eq__('Unable to get data from yfinance')):
+            result.message = 'Please provide a valid stock ticker symbol.'
+            return SymbolSchema().dump(result), 404
+        
+        up_data_base(ticker_symbol)
+        result.message = 'Successfully updated ticker symbol'
+        
+        return SymbolSchema().dump(result), 200
+    except:
+        print(Exception('This got donked up'))
+        result.message = 'Please provide a valid stock ticker symbol.'
+        return SymbolSchema().dump(result), 404
 
-@stock_quote_api.route('/quotes')
+
+@stock_quote_api.get('/quotes')
 @swag_from({
     'responses': {
         HTTPStatus.OK.value: {
@@ -30,7 +73,7 @@ def get_quotes():
     return QuotesSchema().dump(result), 200
 
 
-@stock_quote_api.route('/average')
+@stock_quote_api.get('/average')
 @swag_from({
     'responses': {
         HTTPStatus.OK.value: {
@@ -50,7 +93,7 @@ def get_average():
     return AverageSchema().dump(result), 200
 
 
-@stock_quote_api.route('/spread')
+@stock_quote_api.get('/spread')
 @swag_from({
     'responses': {
         HTTPStatus.OK.value: {
