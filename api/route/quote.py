@@ -23,7 +23,7 @@ stock_quote_api = Blueprint('api', __name__)
             'schema': SymbolSchema
         },
         HTTPStatus.BAD_REQUEST.value: {
-            'description': 'Please provide a valid stock ticker symbol',
+            'description': 'Please provide a valid stock ticker symbol LMAO',
             'schema': SymbolSchema
         }
     }
@@ -50,7 +50,7 @@ def post_ticker():
         return SymbolSchema().dump(result), 200
     except:
         print(Exception('This got donked up'))
-        result.message = 'Please provide a valid stock ticker symbol.'
+        result.message = 'The API may be overcalled, or there could be an issue with the ticker symbol.'
         return SymbolSchema().dump(result), 404
 
 

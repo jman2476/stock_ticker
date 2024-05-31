@@ -31,6 +31,7 @@ def get_finnhub(ticker_symbol):
     print('finn')
     try: 
         data = finnhub_client.quote(ticker_symbol)
+        print(data)
         close_price = data['c']
         return close_price
     except:
@@ -41,10 +42,10 @@ def get_twelve_data(ticker_symbol):
     print('twelve')
     try:
         data = twelveData_client.quote(symbol=ticker_symbol)
-        print('Data: ' + data)
         close_price = float(data.as_json()['close'])
         return close_price
-    except:
+    except Exception as e:
+        print(e)
         return Exception('No data returned from twelve data')
 
 # yFinance fetch
@@ -161,7 +162,7 @@ def trading_hours_check(time_object):
 def up_data_base(ticker_symbol, counter = 0):
     timestamp = datetime.today()
     print(timestamp, isinstance(timestamp, datetime))
-    if (not trading_hours_check(timestamp)):
+    if (trading_hours_check(timestamp)):
         finn = get_finnhub(ticker_symbol)
         twelve = get_twelve_data(ticker_symbol)
         yfin = get_yfinance(ticker_symbol)
