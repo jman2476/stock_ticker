@@ -31,7 +31,7 @@ def get_finnhub(ticker_symbol):
     print('finn')
     try: 
         data = finnhub_client.quote(ticker_symbol)
-        print(data)
+        print("Finnhub: ", data)
         close_price = data['c']
         return close_price
     except:
@@ -43,6 +43,7 @@ def get_twelve_data(ticker_symbol):
     try:
         data = twelveData_client.quote(symbol=ticker_symbol)
         close_price = float(data.as_json()['close'])
+        print('Twelve: ', data.as_json())
         return close_price
     except Exception as e:
         print(e)
@@ -55,6 +56,7 @@ def get_yfinance(ticker_symbol):
         yf_ticker = yf.Ticker(ticker_symbol)
         data = yf_ticker.history('1d')
         close_price = data.iloc[0]['Close']
+        print('yFinance: ', data)
         return close_price
     except :
         return Exception('Unable to get data from yfinance')
@@ -148,8 +150,9 @@ def get_latest_entry():
 # Check if trading hours are active
 def trading_hours_check(time_object):
     print(time_object.hour)
+    print(time_object.weekday())
     if (time_object.weekday() > 5): return False
-    if (time_object.hour < 9 or time_object.hour > 5): return False
+    if (time_object.hour < 9 or time_object.hour > 17): return False
 
     return True
 
@@ -163,6 +166,7 @@ def up_data_base(ticker_symbol, counter = 0):
     timestamp = datetime.today()
     print(timestamp, isinstance(timestamp, datetime))
     if (trading_hours_check(timestamp)):
+        print('cheese')
         finn = get_finnhub(ticker_symbol)
         twelve = get_twelve_data(ticker_symbol)
         yfin = get_yfinance(ticker_symbol)
