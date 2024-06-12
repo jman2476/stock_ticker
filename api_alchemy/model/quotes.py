@@ -1,8 +1,9 @@
-from services.data_analyzer import get_latest_quotes
+from services.data_fetcher import get_latest_quotes
 
 class QuoteModel:
-    def __init__(self):
-        quotes = get_latest_quotes()
+    def __init__(self, session):
+        quotes = get_latest_quotes(session)
+        print(quotes)
 
         self.time = quotes['time']
         self.symbol = quotes['symbol']

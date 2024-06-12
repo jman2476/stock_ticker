@@ -13,7 +13,6 @@ from dotenv import dotenv_values
 env_vars = dotenv_values('.env')
 
 
-
 # Functions to fetch data from the APIs
 # Finnhub fetch
 def get_finnhub(ticker_symbol):
@@ -75,7 +74,7 @@ def slippage(quotes, mean):
 # Analysis function with parameters (finnhub, twelve data, yfinance)
 def analyzer(quote1, quote2, quote3):
     quotes = {
-        "finnhub" : quote1,
+        "finnhub" : quote1, 
         "twelve_data" : quote2,
         "yfinance" : quote3
     }
@@ -86,13 +85,29 @@ def analyzer(quote1, quote2, quote3):
 
 # Database writer
 # TODO: refactor old insert_entry code into SQLAlchemy code
-def insert_entry(timestamp, ticker_symbol, quotes, mean, slippage):
-    return
+def insert_entry(timestamp, ticker_symbol, quotes, mean, slippage, session):
+    try:
+        new_price = PriceData(timestamp, ticker_symbol, quotes['finnhub'], quotes['twelve_data'], quotes['yfinance'], mean, slippage['finnhub'], slippage['twelve_data'], slippage['yfinance'])
+
+        session.add(new_price)
+        session.commit()
+
+    except Exception as err:
+        print(err)
+        
+    return new_price
 
 # Fetch most recent entry
 # TODO: refactor old get_latest_entry code into SQLAlchemy code
-def get_latest_entry():
-    return
+def get_latest_entry(session):
+    last_entry = {}
+    try:
+        last_entry = session.query(PriceData).order_by(PriceData.time.desc())
+        session.execute
+    except Exception as err:
+        print(err)
+    
+    return last_entry
 
 # Check if trading hours are active
 def trading_hours_check(time_object):
@@ -104,10 +119,10 @@ def trading_hours_check(time_object):
     return True
 
 # Gather all necessary information (quotes, average, spread) and update the quotes database
-def up_data_base(ticker_symbol):
+def up_data_base(ticker_symbol, session):
     timestamp = datetime.today()
     print(timestamp, isinstance(timestamp, datetime))
-    if (trading_hours_check(timestamp)):
+    if (not trading_hours_check(timestamp)):
         print('cheese')
         finn = get_finnhub(ticker_symbol)
         twelve = get_twelve_data(ticker_symbol)
@@ -115,6 +130,7 @@ def up_data_base(ticker_symbol):
         
         data = analyzer(finn, twelve, yfin)        
 
-        insert_entry(timestamp, ticker_symbol, data[0], data[1], data[2])
+        insert_entry(timestamp, ticker_symbol, data[0], data[1], data[2], session)
 
-        print(get_latest_entry())
+        print(get_latest_entry(session))
+

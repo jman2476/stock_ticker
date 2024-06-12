@@ -7,7 +7,8 @@ from sqlalchemy.orm import sessionmaker, declarative_base
 Base = declarative_base()
 
 class PriceData(Base):
-    __tableName__ = 'price_quotes'
+    __tablename__ = 'price_quotes'
+    
 
     time = Column('time', TEXT, primary_key=True)
     symbol = Column(TEXT, ForeignKey("company.symbol"))
@@ -34,9 +35,9 @@ class PriceData(Base):
     def __repr__(self):
         return f"T: {self.time} S: {self.symbol} Q: ({self.finnhub}, {self.twelve_data}, {self.yfinance}) M:{self.average} D: [{self.finn_spread}, {self.twelve_spread}, {self.yfin_spread}]"
 
-
 class Company(Base):
-    __tableName__ = 'price_quotes'
+    __tablename__ = 'price_quotes'
+    __table_args__ = {'extend_existing': True}
 
     symbol = Column('symbol', TEXT, primary_key=True)
     name = Column('name', TEXT)
