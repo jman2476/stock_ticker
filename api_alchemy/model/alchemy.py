@@ -44,7 +44,7 @@ class Company(Base):
     market_cap = Column('market_cap', Integer)
     volume = Column('volume', Integer)
     exchange = Column('exchange', TEXT)
-
+    # Columns to add: exchange time zone
 
 
     def __init__(self, symbol, name, market_cap, volume, exchange):

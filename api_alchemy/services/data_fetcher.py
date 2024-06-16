@@ -10,9 +10,13 @@ def get_latest_quotes(session):
         quotes = session.execute(
             select(PriceData.time, PriceData.symbol, PriceData.finnhub, PriceData.twelve_data, PriceData.yfinance).order_by(PriceData.time.desc()).limit(1)
         )
+
+        result = quotes.first()
+        print('Results:', result)
     except Exception as err:
+        print('Quotes got donked')
         print(err)
-    return quotes.first()._asdict()
+    return result._asdict()
 
 # Retreive the stock average qutoe from the database
 def get_latest_average(session):

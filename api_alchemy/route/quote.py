@@ -51,7 +51,7 @@ def post_ticker():
         
         return SymbolSchema().dump(result), 200
     except:
-        print(Exception('This got donked up'))
+        print(Exception('Post Ticker got donked up'))
         result.message = 'The API may be overcalled, or there could be an issue with the ticker symbol.'
         return SymbolSchema().dump(result), 404
 

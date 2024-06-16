@@ -2,6 +2,7 @@ from services.data_fetcher import get_latest_quotes
 
 class QuoteModel:
     def __init__(self, session):
+        print('Session: ', session)
         quotes = get_latest_quotes(session)
         print(quotes)
 
