@@ -11,7 +11,8 @@ class PriceData(Base):
     
 
     time = Column('time', TEXT, primary_key=True)
-    symbol = Column(TEXT, ForeignKey("company.symbol"))
+    # symbol = Column(TEXT, ForeignKey("company.symbol"))
+    company = Column()
     finnhub = Column('finnhub', Float)
     twelve_data = Column('twelve_data', Float)
     yfinance = Column('yfinance', Float)
@@ -36,23 +37,23 @@ class PriceData(Base):
         return f"T: {self.time} S: {self.symbol} Q: ({self.finnhub}, {self.twelve_data}, {self.yfinance}) M:{self.average} D: [{self.finn_spread}, {self.twelve_spread}, {self.yfin_spread}]"
 
 class Company(Base):
-    __tablename__ = 'price_quotes'
-    __table_args__ = {'extend_existing': True}
+    __tablename__ = 'company'
+    # __table_args__ = {'extend_existing': True}
 
-    symbol = Column('symbol', TEXT, primary_key=True)
-    name = Column('name', TEXT)
-    market_cap = Column('market_cap', Integer)
+    name = Column('name', TEXT, primary_key=True)
+    symbol = Column('symbol', TEXT)
+    currency = Column('currency', TEXT)
     volume = Column('volume', Integer)
     exchange = Column('exchange', TEXT)
     # Columns to add: exchange time zone
 
 
-    def __init__(self, symbol, name, market_cap, volume, exchange):
+    def __init__(self, symbol, name, currency, volume, exchange):
         self.symbol = symbol
         self.name = name
-        self.market_cap = market_cap
+        self.currency = currency
         self.volume = volume
         self.exchange = exchange
     
     def __repr__(self):
-        return f"{self.symbol}: {self.name}, money traded: {self.market_cap}, volume traded: {self.volume}, exchange: {self.exchange}"
+        return f"{self.symbol}: {self.name}, money traded: {self.currency}, volume traded: {self.volume}, exchange: {self.exchange}"

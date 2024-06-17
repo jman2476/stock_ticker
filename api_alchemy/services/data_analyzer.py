@@ -9,13 +9,14 @@ from connection.engine import Session
 from model.alchemy import PriceData, Company
 from datetime import datetime
 from dotenv import dotenv_values
+import os
 # Load environment variables
+env_vars = dotenv_values('.env')
 
 # Function to get environment variables
 def get_vars(key_name):
     try:
         print('var1')
-        env_vars = dotenv_values('.env')
         print('var2: ', env_vars)
         return env_vars[key_name]
     except Exception as e:
@@ -27,7 +28,8 @@ def get_vars(key_name):
 def get_finnhub(ticker_symbol):
     print('finn')
     try: 
-        finnhub_client = finnhub.Client(api_key=get_vars('FINNHUB_API_KEY'))
+        finnhub_client = finnhub.Client(api_key=os.environ['FINNHUB_API_KEY'])
+        print('Finn client: ', finnhub_client)
         data = finnhub_client.quote(ticker_symbol)
         print("Finnhub: ", data)
         close_price = data['c']
@@ -38,15 +40,14 @@ def get_finnhub(ticker_symbol):
 
 # Twelve Data fetch
 # TODO: also fetch and return metadata from Twelve Data
-def get_twelve_data(ticker_symbol):
+def get_twelve_data(ticker_symbol, session):
     print('twelve')
     try:
-        print('aleph')
-        twelveData_client = TDClient(apikey=env_vars['TWELVEDATA_API_KEY']) 
-        print('bet')
+        twelveData_client = TDClient(apikey=os.environ['TWELVEDATA_API_KEY']) 
         data = twelveData_client.quote(symbol=ticker_symbol)
         close_price = float(data.as_json()['close'])
-        print('Twelve: ', data.as_json)
+        print('Twelve: ', data.as_json())
+        set_company_data(data, session)
         return close_price
     except Exception as e:
         print('twelve error:', e)
@@ -64,6 +65,19 @@ def get_yfinance(ticker_symbol):
     except Exception as e:
         print('yfinnance error: ', e)
         return Exception('Unable to get data from yfinance')
+    
+# Extract company data from Twelve Data client information
+def set_company_data(data, session):
+    try:
+        new_company = Company(data.as_json()['symbol'], data.as_json()['name'], data.as_json()['currency'], data.as_json()['volume'], data.as_json()['exchange'])
+
+        print('new company: ', new_company)
+        session.add(new_company)
+        session.commit()
+
+    except Exception as err:
+        print('Company data error:', err)
+    return 
 
 # Averaging function, takes a dictionary as parameter
 def average(quotes):
@@ -135,10 +149,10 @@ def trading_hours_check(time_object):
 def up_data_base(ticker_symbol, session):
     timestamp = datetime.today()
     print(timestamp, isinstance(timestamp, datetime))
-    if (not trading_hours_check(timestamp)):
+    if (trading_hours_check(timestamp)):
         print('cheese')
         finn = get_finnhub(ticker_symbol)
-        twelve = get_twelve_data(ticker_symbol)
+        twelve = get_twelve_data(ticker_symbol, session)
         yfin = get_yfinance(ticker_symbol)
         
         data = analyzer(finn, twelve, yfin)        
@@ -147,4 +161,3 @@ def up_data_base(ticker_symbol, session):
 
         print(get_latest_entry(session))
 
-# up_data_base('AAPL', Session())
