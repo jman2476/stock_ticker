@@ -9,7 +9,7 @@ from model.spread import SpreadModel
 from schema.spread import SpreadSchema
 from model.symbol import SymbolModel
 from schema.symbol import SymbolSchema
-from connection.engine import Session
+from connection.engine import session
 
 
 from services.data_analyzer import up_data_base, get_yfinance
@@ -45,8 +45,8 @@ def post_ticker():
         if (quote.__eq__('Unable to get data from yfinance')):
             result.message = 'Please provide a valid stock ticker symbol.'
             return SymbolSchema().dump(result), 404
-        with Session() as session:
-            up_data_base(ticker_symbol, session)
+        
+        up_data_base(ticker_symbol, session)
         result.message = 'Successfully updated ticker symbol'
         
         return SymbolSchema().dump(result), 200
@@ -71,8 +71,7 @@ def get_quotes():
 
     ---
     """
-    with Session() as session:
-        result = QuoteModel(session)
+    result = QuoteModel(session)
     return QuotesSchema().dump(result), 200
 
 
@@ -91,8 +90,7 @@ def get_average():
 
     ---
     """
-    with Session() as session:
-        result = AverageModel(session)
+    result = AverageModel(session)
     return AverageSchema().dump(result), 200
 
 
@@ -111,6 +109,5 @@ def get_spread():
 
     ---
     """
-    with Session() as session:
-        result = SpreadModel(session)
+    result = SpreadModel(session)
     return SpreadSchema().dump(result), 200

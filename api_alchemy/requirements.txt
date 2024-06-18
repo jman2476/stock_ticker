@@ -1,0 +1,10 @@
+finnhub_python==2.4.19
+flasgger==0.9.7.1
+Flask==3.0.3
+Flask_Cors==4.0.1
+flask_marshmallow==1.2.1
+marshmallow==3.21.3
+python-dotenv==1.0.1
+SQLAlchemy==2.0.30
+twelvedata==1.2.12
+yfinance==0.2.38
